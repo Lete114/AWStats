@@ -1,0 +1,29 @@
+{
+  "name": "awstats",
+  "version": "1.0.0",
+  "description": "",
+  "main": "lib/generated",
+  "scripts": {
+    "build": "node lib/generated",
+    "minify": "node lib/minify",
+    "server": "node lib/server",
+    "deploy": "node lib/deploy",
+    "clean": "node lib/clean"
+  },
+  "keywords": [
+    "awstats"
+  ],
+  "author": "Lete114",
+  "license": "ISC",
+  "dependencies": {
+    "clean-css": "^4.2.3",
+    "connect": "^3.7.0",
+    "ejs": "^3.1.6",
+    "fswin": "^3.21.107",
+    "html-minifier": "^4.0.0",
+    "js-yaml": "^4.0.0",
+    "serve-static": "^1.14.1",
+    "simple-git": "^2.38.0",
+    "uglify-js": "^3.12.4"
+  }
+}
