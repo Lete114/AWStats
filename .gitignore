@@ -1,4 +1,5 @@
 node_modules/
 public/
+themes/
 .deploy_git/
 package-lock.json
