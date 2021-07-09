@@ -57,12 +57,12 @@ package.json
 
 ```yml
 #--------------------------------------------------------
-# AWStats
-# 项目地址：https://github.com/lete114/AWStats
-# 一个静态静态生成器
+# Awstats
+# 项目地址：https://github.com/lete114/Awstats
+# 一个简单的静态静态生成器
 #--------------------------------------------------------
 
-themes: WebStack ## 主题名称
+theme: WebStack ## 主题名称
 public: public ## 渲染后输出的路径
 
 # 压缩
@@ -74,9 +74,9 @@ minify:
 
 # 部署
 deploy:
-  repoURL:  # 部署的仓库
+  repoURL: # 部署的仓库
   remote: origin 
-  branch: master # 分支
+  branch: master # 分支(确保仓库已有分支)
   force: false # 是否开启强制提交
   commitMsg: # 提交的信息，默认：系统当前时间
 ```

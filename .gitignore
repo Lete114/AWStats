@@ -2,4 +2,5 @@ node_modules/
 public/
 themes/
 .deploy_git/
+.vscode/
 package-lock.json

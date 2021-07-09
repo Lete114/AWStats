@@ -1,6 +1,6 @@
 {
   "name": "awstats",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "",
   "main": "lib/generated",
   "scripts": {
@@ -18,10 +18,9 @@
   "dependencies": {
     "clean-css": "^4.2.3",
     "ejs": "^3.1.6",
-    "fswin": "^3.21.107",
     "html-minifier": "^4.0.0",
     "js-yaml": "^4.0.0",
-    "simple-git": "^2.38.0",
+    "simple-git": "^2.40.0",
     "uglify-js": "^3.12.4"
   }
 }
