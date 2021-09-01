@@ -1,14 +1,10 @@
 {
-  "name": "awstats",
-  "version": "1.1.0",
-  "description": "",
-  "main": "lib/generated",
-  "scripts": {
-    "build": "node lib/generated",
-    "minify": "node lib/minify",
-    "server": "node lib/server",
-    "deploy": "node lib/deploy",
-    "clean": "node lib/clean"
+  "name": "awstats-test",
+  "version": "1.1.5",
+  "description": "基于 NodeJS 的一个静态生成器，快来定义您的页面吧！(A static generator based on NodeJS, come to define your page!)",
+  "bin": {
+    "aws": "./bin/AWStats",
+    "awstats": "./bin/AWStats"
   },
   "keywords": [
     "awstats"
@@ -16,10 +12,15 @@
   "author": "Lete114",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^2.4.2",
     "clean-css": "^4.2.3",
+    "commander": "^2.20.3",
+    "download-git-repo": "^3.0.2",
     "ejs": "^3.1.6",
     "html-minifier": "^4.0.0",
+    "inquirer": "^8.1.2",
     "js-yaml": "^4.0.0",
+    "ora": "^6.0.0",
     "simple-git": "^2.40.0",
     "uglify-js": "^3.12.4"
   }
