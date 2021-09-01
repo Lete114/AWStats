@@ -1,36 +1,58 @@
-# AWStats
+<h1 align="center"><a href="https://github.com/lete114/hexo-theme-MengD" target="_blank">AWStats</a></h1>
+<p align="center"> A fast , static files generator framework , powered by <a href="https://nodejs.org" title="https://nodejs.org">Node.js</a></p>
 
-一个静态生成器，快来定义您的页面吧！
+<p align="center">
+    <a href="https://github.com/lete114/AWStats-cli/releases/"><img src="https://img.shields.io/github/package-json/v/lete114/AWStats-cli/master?color=%23e58a8a&label=master" alt="master"></a>
+    <a href="https://github.com/lete114/AWStats-cli/blob/master/LICENSE"><img src="https://img.shields.io/github/license/lete114/AWStats-cli?color=FF5531" alt="MIT License"></a>
+</p>
 
-# 使用
+## Quick Start
 
 > 前提：你的电脑必须安装[Node.js](https://nodejs.org/)才能启动该项目
 
+**Install AWStats**
+
 ```bash
-npm run build # 生成页面
-
-npm run server # 本地预览(默认执行npm run build)
-
-npm run minify # 压缩页面
-
-npm rnu clean # 清除已生成的页面
-
-npm run deploy # 部署
+npm install awstats-cli -g
 ```
 
-# Themes 
+**Initialize AWStats**
+
+```bash
+mkdir AWStats-HomePage # 创建目录(自定义)
+
+awstats init # 初始化
+```
+
+**Other Commands**
+
+```bash
+awstats init # 初始化 可缩写为: aws i
+
+awstats generate # 生成 aws g (以此类推输入首字母即可)
+
+awstats minify # 压缩
+
+awstats server # 本地预览
+
+awstats deploy # 部署
+
+awstats clean # 清理
+```
+
+## Themes
 
 > 如没有`themes`目录可自建
 
-在themes目录下可以新建你的主题(例如：`./themes/WebStack`)，主题文件下可以新建`config.yml`主题配置文件，新建`template`目录，存放你要生成的页面(文件后缀为.ejs)，`static`静态资源
+在 themes 目录下可以新建你的主题(例如：`./themes/HomePage`)，主题文件下可以新建`config.yml`主题配置文件，新建`template`目录，存放你要生成的页面(文件后缀为.ejs)，`static`静态资源
 
-可以参考：[WebSatck](https://github.com/lete114/WebStack)
+可以参考：[HomePage](https://github.com/lete114/AWStats-theme-HomePage)
 
 ```
 lib
     |-- xxx
 themes
-    |-- WebSatck
+    |-- HomePage
         |-- static
             |-- css
             |-- js
@@ -45,38 +67,12 @@ config.yml
 package.json
 ```
 
-`WebSatck`: 主题昵称
+`HomePage`: 主题昵称
 
 `static`: 静态资源
 
 `template`: 模板
 
-# 配置
+## License
 
-> 本地预览默认是114端口，可以在配置文件内添加`port`来自定义端口
-
-```yml
-#--------------------------------------------------------
-# Awstats
-# 项目地址：https://github.com/lete114/Awstats
-# 一个简单的静态静态生成器
-#--------------------------------------------------------
-
-theme: WebStack ## 主题名称
-public: public ## 渲染后输出的路径
-
-# 压缩
-minify: 
-  log: true # 是否打印日志
-  html: true
-  css: true
-  js: true
-
-# 部署
-deploy:
-  repoURL: # 部署的仓库
-  remote: origin 
-  branch: master # 分支(确保仓库已有分支)
-  force: false # 是否开启强制提交
-  commitMsg: # 提交的信息，默认：系统当前时间
-```
+[MIT](LICENSE)

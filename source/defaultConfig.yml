@@ -4,6 +4,7 @@
 # 一个简单的静态静态生成器
 #--------------------------------------------------------
 
+port: 114 # 端口号
 theme: HomePage ## 主题名称
 public: public ## 渲染后输出的路径
 
@@ -16,7 +17,7 @@ minify:
 
 # 部署
 deploy:
-  repoURL: git@github.com:lete114/AWStats-test.git # 部署的仓库
+  repoURL: # 部署的仓库
   remote: origin
   branch: master # 分支(确保仓库已有分支)
   force: false # 是否开启强制提交
