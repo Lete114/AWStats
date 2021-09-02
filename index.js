@@ -11,4 +11,4 @@ const server = require('./lib/server')
 const deploy = require('./lib/deploy')
 const clean = require('./lib/clean')
 
-module.exports={init,generate,minify,server,deploy,clean}
+module.exports = { init, generate, minify, server, deploy, clean }
