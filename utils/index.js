@@ -3,7 +3,8 @@
 const fs = require('fs')
 const path = require('path')
 const yaml = require('js-yaml')
-const logger = require('./logger')
+const logger = require('../lib/logger')
+
 
 /**
  *  获取绝对路径
