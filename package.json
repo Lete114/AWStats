@@ -14,10 +14,26 @@
   "dependencies": {
     "chalk": "^2.4.2",
     "clean-css": "^4.2.3",
+    "cross-spawn": "^7.0.3",
     "ejs": "^3.1.6",
     "html-minifier": "^4.0.0",
     "js-yaml": "^4.0.0",
     "simple-git": "^2.40.0",
     "uglify-js": "^3.12.4"
-  }
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lete114/AWStats.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lete114/AWStats/issues"
+  },
+  "homepage": "https://github.com/lete114/AWStats#readme"
 }

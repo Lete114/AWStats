@@ -23,8 +23,7 @@ module.exports = async function tryConnetcUsablePort(port, portAvailableCallback
     port++
     tryConnetcUsablePort(port, portAvailableCallback)
   } else {
-    logger.info('Already For you Opening a new port '+port)
+    logger.info('Already For you Opening a new port ' + port)
     portAvailableCallback(port)
   }
 }
-
