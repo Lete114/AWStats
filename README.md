@@ -1,4 +1,4 @@
-<h1 align="center"><a href="https://github.com/lete114/hexo-theme-MengD" target="_blank">AWStats</a></h1>
+<h1 align="center"><a href="https://github.com/lete114/AWStats" target="_blank">AWStats</a></h1>
 <p align="center"> A fast , static files generator framework , powered by <a href="https://nodejs.org" title="https://nodejs.org">Node.js</a></p>
 
 <p align="center">
