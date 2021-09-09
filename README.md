@@ -2,8 +2,8 @@
 <p align="center"> A fast , static files generator framework , powered by <a href="https://nodejs.org" title="https://nodejs.org">Node.js</a></p>
 
 <p align="center">
-    <a href="https://github.com/lete114/AWStats-cli/releases/"><img src="https://img.shields.io/github/package-json/v/lete114/AWStats-cli/master?color=%23e58a8a&label=master" alt="master"></a>
-    <a href="https://github.com/lete114/AWStats-cli/blob/master/LICENSE"><img src="https://img.shields.io/github/license/lete114/AWStats-cli?color=FF5531" alt="MIT License"></a>
+    <a href="https://github.com/lete114/AWStats/releases/"><img src="https://img.shields.io/github/package-json/v/lete114/AWStats/master?color=%23e58a8a&label=master" alt="master"></a>
+    <a href="https://github.com/lete114/AWStats/blob/master/LICENSE"><img src="https://img.shields.io/github/license/lete114/AWStats?color=FF5531" alt="MIT License"></a>
 </p>
 
 ## Quick Start
