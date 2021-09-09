@@ -10,9 +10,9 @@ const logger = require('../lib/logger')
  * @param {*} Path 路径，必须以‘/’开头
  * @returns 绝对路径完整地址
  */
-function resolvePath(Path) {
+function resolvePath(...Path) {
   let root_dir = process.cwd()
-  return path.join(root_dir, Path)
+  return path.join(root_dir, ...Path)
 }
 
 /**
@@ -38,13 +38,8 @@ function fileCopy(sourcesPath, attachPath) {
       let readable = fs.createReadStream(sourcesPath)
       // 创建写入流
       let writable = fs.createWriteStream(attachPath)
-
-      readable.on('data', (chunk) => {
-        writable.write(chunk)
-      })
-      readable.on('end', () => {
-        writable.end()
-      })
+      readable.on('data', (chunk) => writable.write(chunk))
+      readable.on('end', () => writable.end())
     }
   })
 }
@@ -61,13 +56,8 @@ function fileCopySync(sourcesPath, attachPath) {
     let readable = fs.createReadStream(sourcesPath)
     // 创建写入流
     let writable = fs.createWriteStream(attachPath)
-
-    readable.on('data', (chunk) => {
-      writable.write(chunk)
-    })
-    readable.on('end', () => {
-      writable.end()
-    })
+    readable.on('data', (chunk) => writable.write(chunk))
+    readable.on('end', () => writable.end())
   }
 }
 

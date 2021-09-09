@@ -19,7 +19,15 @@ npm install awstats-cli -g
 **Initialize AWStats**
 
 ```bash
+awstats init AWStats-HomePage
+
+cd AWStats-HomePage # 进入初始化的目录
+
+## 你也可用使用以下方式
+
 mkdir AWStats-HomePage # 创建目录(自定义)
+
+cd AWStats-HomePage # 进入创建的目录
 
 awstats init # 初始化
 ```
