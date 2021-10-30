@@ -1,5 +1,5 @@
 const net = require('net')
-const logger = require('../lib/logger')
+const logger = require('../utils/logger')
 
 async function portUsedStatus(port) {
   return new Promise((resolve, reject) => {

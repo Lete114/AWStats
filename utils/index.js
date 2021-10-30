@@ -1,9 +1,15 @@
 // utils 工具
 
-const fs = require('fs')
-const path = require('path')
+const { readFileSync } = require('fs')
+const { join } = require('path')
+const { existsSync } = require('fs')
 const yaml = require('js-yaml')
-const logger = require('../lib/logger')
+const logger = require('./logger')
+const { CopyFile, CopyDirFile } = require('./CopyFile')
+const CreateDirPath = require('./CreateDirPath')
+const readFile = require('./ReadFile')
+const Clear = require('./Remove')
+const { GetMime, Handler404 } = require('./serverUtils')
 
 /**
  *  获取绝对路径
@@ -12,7 +18,7 @@ const logger = require('../lib/logger')
  */
 function resolvePath(...Path) {
   let root_dir = process.cwd()
-  return path.join(root_dir, ...Path)
+  return join(root_dir, ...Path)
 }
 
 /**
@@ -21,106 +27,84 @@ function resolvePath(...Path) {
  * @returns Config JSON
  */
 function parseConfigFile(filePath) {
-  const configFilePath = resolvePath(filePath)
-  return yaml.load(fs.readFileSync(configFilePath, { encoding: 'utf8' })) // 解析配置文件
+  const config = readFileSync(filePath, { encoding: 'utf8' })
+  return yaml.load(config) // 解析配置文件
 }
 
 /**
- * 复制文件
- * @param {*} sourcesPath 原文件路径
- * @param {*} attachPath 指定输出路径
+ * 深度克隆
+ * @param {Object|Array} obj
+ * @returns {Object|Array}
  */
-function fileCopy(sourcesPath, attachPath) {
-  fs.stat(sourcesPath, (err, stat) => {
-    if (err) throw err
-    if (stat.isFile()) {
-      // 创建读取流
-      let readable = fs.createReadStream(sourcesPath)
-      // 创建写入流
-      let writable = fs.createWriteStream(attachPath)
-      readable.on('data', (chunk) => writable.write(chunk))
-      readable.on('end', () => writable.end())
-    }
-  })
+function DeepClone(obj = {}) {
+  const str = JSON.stringify(obj)
+  return JSON.parse(str)
 }
 
 /**
- * 同步复制文件
- * @param {*} sourcesPath 原文件路径
- * @param {*} attachPath 指定输出路径
+ * 获取配置文件
+ * @returns {Object}
  */
-function fileCopySync(sourcesPath, attachPath) {
-  const stat = fs.statSync(sourcesPath)
-  if (stat.isFile()) {
-    // 创建读取流
-    let readable = fs.createReadStream(sourcesPath)
-    // 创建写入流
-    let writable = fs.createWriteStream(attachPath)
-    readable.on('data', (chunk) => writable.write(chunk))
-    readable.on('end', () => writable.end())
-  }
+function GetConfig() {
+  // 获取配置文件绝对路径
+  const configYaml = resolvePath('/config.yaml')
+  const configYml = resolvePath('/config.yml')
+
+  // 判断配置文件是否存在
+  const isYaml = existsSync(configYaml)
+  const isYml = existsSync(configYml)
+
+  if (isYml) return parseConfigFile(configYml)
+  else if (isYaml) return parseConfigFile(configYaml)
+
+  logger.err('Configuration file not found')
 }
 
 /**
- * 复制一个文件夹下的文件到另一个文件夹
- * @param src 源文件夹
- * @param newSrc 目标文件夹
+ * 获取主题配置文件
+ * @param {String} theme 主题昵称
+ * @returns {Object}
  */
-function copy(src, newSrc) {
-  // 读取目录中的所有文件/目录
-  fs.readdir(src, (err, paths) => {
-    if (err) throw err
-    paths.forEach((_path) => {
-      const _src = path.resolve(`${src}/${_path}`)
-      const _newSrc = path.resolve(`${newSrc}/${_path}`)
-      if (fs.existsSync(_newSrc)) {
-        const cwdPath = process.cwd() + path.sep
-        const publicRelativePath = _newSrc.replace(cwdPath, '')
-        const sourcesRelativePath = _src.replace(cwdPath, '')
-        logger.warn('the target file already exists', sourcesRelativePath, '--->', publicRelativePath)
-      }
-      fs.stat(_src, (err, stat) => {
-        if (err) throw err
-        // 判断是否为文件
-        if (stat.isFile()) {
-          // 创建读取流
-          let readable = fs.createReadStream(_src)
-          // 创建写入流
-          let writable = fs.createWriteStream(_newSrc)
+function GetThemeConfig(theme) {
+  if (!theme) return
 
-          readable.on('data', (chunk) => {
-            writable.write(chunk)
-          })
-          readable.on('end', () => {
-            writable.end()
-          })
-          return
-        }
-        // 如果是目录则递归调用自身
-        if (stat.isDirectory()) {
-          // 如果路径存在，则返回 true，否则返回 false
-          if (fs.existsSync(_newSrc)) copy(_src, _newSrc)
-          else fs.mkdir(_newSrc, () => copy(_src, _newSrc))
-        }
-      })
-    })
-  })
+  // 获取配置文件绝对路径
+  const configThemeYaml = resolvePath(`/themes/${theme}/config.yaml`)
+  const configThemeYml = resolvePath(`/themes/${theme}/config.yml`)
+  const configRootThemeYaml = resolvePath(`/config.${theme}.yaml`)
+  const configRootThemeYml = resolvePath(`/config.${theme}.yml`)
+
+  // 判断配置文件是否存在
+  const isYaml = existsSync(configThemeYaml)
+  const isYml = existsSync(configThemeYml)
+  const isRootYaml = existsSync(configRootThemeYaml)
+  const isRootYml = existsSync(configRootThemeYml)
+
+  // 解析主题配置文件
+  let themeConfig = {}
+  if (isYml) themeConfig = parseConfigFile(configThemeYml)
+  else if (isYaml) themeConfig = parseConfigFile(configThemeYaml)
+  else logger.err('Configuration file not found')
+
+  // 解析根目录主题配置文件
+  let themeRootConfig = {}
+  if (isRootYml) themeRootConfig = parseConfigFile(configRootThemeYml)
+  else if (isRootYaml) themeRootConfig = parseConfigFile(configRootThemeYaml)
+
+  return Object.assign(themeConfig, themeRootConfig)
 }
 
-/**
- * 删除目录下的所有文件及目录，包括当前目录
- * @param path 需要删除的路径文件夹
- */
-function removeAll(_path) {
-  if (!fs.existsSync(_path)) return
-  const files = fs.readdirSync(_path)
-  for (let item of files) {
-    const file_path = path.resolve(`${_path}/${item}`)
-    const stats = fs.statSync(file_path)
-    if (stats.isDirectory()) removeAll(file_path)
-    else fs.unlinkSync(file_path) //删除文件
-  }
-  fs.rmdirSync(_path) // 删除文件夹
+module.exports = {
+  resolvePath,
+  DeepClone,
+  GetMime,
+  parseConfigFile,
+  GetConfig,
+  GetThemeConfig,
+  readFile,
+  CopyFile,
+  CopyDirFile,
+  CreateDirPath,
+  Clear,
+  Handler404
 }
-
-module.exports = { copy, removeAll, resolvePath, parseConfigFile, fileCopy, fileCopySync }
