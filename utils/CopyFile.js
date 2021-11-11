@@ -31,10 +31,10 @@ async function CopyDirFile(src, newSrc) {
     const _src = resolve(`${src}/${path}`)
     const _newSrc = resolve(`${newSrc}/${path}`)
     if (existsSync(_newSrc)) {
-      const cwdPath = process.cwd() + sep
-      const publicRelativePath = _newSrc.replace(cwdPath, '')
-      const sourcesRelativePath = _src.replace(cwdPath, '')
-      logger.warn('the target file already exists', sourcesRelativePath, '--->', publicRelativePath)
+      logger.warn('The target file already exists, which may cause some problems')
+      console.log(logger.custom().hex('#FF4848').bold('Source File:'), _src)
+      console.log(logger.custom().hex('#FF4848').bold('Target File:'), _newSrc)
+      return
     }
     const stat = statSync(_src)
     // 判断是否为文件
@@ -50,9 +50,7 @@ async function CopyDirFile(src, newSrc) {
     }
     // 如果是目录则递归调用自身
     if (stat.isDirectory()) {
-      // 如果路径存在，则返回 true，否则返回 false
-      if (existsSync(_newSrc)) CopyDirFile(_src, _newSrc)
-      else mkdir(_newSrc, () => CopyDirFile(_src, _newSrc))
+      mkdir(_newSrc, () => CopyDirFile(_src, _newSrc))
     }
   })
 }

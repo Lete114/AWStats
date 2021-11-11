@@ -7,9 +7,8 @@ const yaml = require('js-yaml')
 const logger = require('./logger')
 const { CopyFile, CopyDirFile } = require('./CopyFile')
 const CreateDirPath = require('./CreateDirPath')
-const readFile = require('./ReadFile')
+const ReadAllFile = require('./ReadFile')
 const Clear = require('./Remove')
-const { GetMime, Handler404 } = require('./serverUtils')
 
 /**
  *  获取绝对路径
@@ -17,8 +16,8 @@ const { GetMime, Handler404 } = require('./serverUtils')
  * @returns 绝对路径完整地址
  */
 function resolvePath(...Path) {
-  let root_dir = process.cwd()
-  return join(root_dir, ...Path)
+  let root = process.cwd()
+  return join(root, ...Path)
 }
 
 /**
@@ -97,14 +96,12 @@ function GetThemeConfig(theme) {
 module.exports = {
   resolvePath,
   DeepClone,
-  GetMime,
   parseConfigFile,
   GetConfig,
   GetThemeConfig,
-  readFile,
+  ReadAllFile,
   CopyFile,
   CopyDirFile,
   CreateDirPath,
-  Clear,
-  Handler404
+  Clear
 }

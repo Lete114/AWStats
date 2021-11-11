@@ -1,43 +1,56 @@
 const { join, extname } = require('path')
-const {statSync, readdirSync} = require('fs')
+const { statSync, readdirSync } = require('fs')
 
 /**
  * 读取一个目录下的所有文件
  * @param {String} dirPath 目标目录
- * @param {Array} suffix 读取文件后缀
- * @param {Array} ignore 忽略文件|目录
- * @returns {Array|String}
+ * @param {Object} options 选项:
+ * @returns {Array}
  */
-function ReadFile(dirPath, suffix = [], ignore = []) {
+function ReadAllFile(dirPath, options = {}) {
+  const defualtOptions = {
+    suffix: false,
+    ignoreSuffix: false,
+    ignore: false
+  }
+  options = Object.assign(defualtOptions, options)
+
   let array = []
   const result = readdirSync(dirPath)
   for (const item of result) {
-    const resolveParh = join(dirPath, item)
+    const resolvePath = join(dirPath, item)
 
     // 忽略文件|目录
-    const isIgnoreEmpty = ignore.length != 0
-    const isIgnore = isIgnoreEmpty && item.includes(ignore)
-
-    // 读取指定文件后缀
-    const isExtnameEmpty = suffix.length != 0
-    const isExtname = isExtnameEmpty && extname(resolveParh).includes(suffix)
-
+    const isIgnore = options.ignore && item.includes(options.ignore)
     if (isIgnore) continue
-    if (isExtname) continue
+
+    // 忽略指定文件后缀
+    const isIgnoreSuffix = options.ignoreSuffix && extname(item).includes(options.ignoreSuffix)
+    if (isIgnoreSuffix) continue
 
     // 读取文件信息
-    const stat = statSync(resolveParh)
+    const stat = statSync(resolvePath)
 
-    const isFile = stat.isFile()
-    const isDirectory = stat.isDirectory()
-    if (isFile) {
-      array.push(resolveParh)
-    } else if (isDirectory) {
-      const resultArr = ReadFile(resolveParh)
+    // 文件 合并
+    if (stat.isFile()) {
+      // 读取指定文件后缀名
+      if (options.suffix) {
+        const isSuffix = extname(item).includes(options.suffix)
+        if (isSuffix) array.push(resolvePath)
+      } else {
+        array.push(resolvePath)
+      }
+      continue
+    }
+
+    // 目录 递归
+    if (stat.isDirectory()) {
+      const resultArr = ReadAllFile(resolvePath, options)
       array = [...array, ...resultArr]
     }
   }
   return array
 }
 
-module.exports = ReadFile
+
+module.exports = ReadAllFile
