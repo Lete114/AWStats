@@ -1,5 +1,5 @@
 const { join, extname } = require('path')
-const { statSync, readdirSync } = require('fs')
+const { statSync, readdirSync, existsSync } = require('fs')
 
 /**
  * 读取一个目录下的所有文件
@@ -8,6 +8,7 @@ const { statSync, readdirSync } = require('fs')
  * @returns {Array}
  */
 function ReadAllFile(dirPath, options = {}) {
+  if (!existsSync(dirPath)) return []
   const defualtOptions = {
     suffix: false,
     ignoreSuffix: false,
@@ -51,6 +52,5 @@ function ReadAllFile(dirPath, options = {}) {
   }
   return array
 }
-
 
 module.exports = ReadAllFile

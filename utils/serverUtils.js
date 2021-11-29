@@ -32,7 +32,7 @@ async function Handler404(res, path, ConfigData) {
 // Watch 监听文件
 let AllFile = {}
 let ConfigData = {}
-;(function () {
+function WatchServer() {
   // 获取配置文件
   const config = GetConfig()
   const theme = GetThemeConfig(config.theme)
@@ -60,8 +60,12 @@ let ConfigData = {}
   const watchDir = [rootStaticPath, themeStaticPath, themeTemplatePath]
   chokidar.watch(watchDir).on('all', () => {
     // 读取根目录静态文件
-    const rootStatsAllPath = ReadAllFile(rootStaticPath)
-    const relativeRootStatsAllPath = rootStatsAllPath.map((item) => item.replace(rootStaticPath, ''))
+    let rootStatsAllPath = []
+    let relativeRootStatsAllPath = []
+    if (existsSync(rootStaticPath)) {
+      rootStatsAllPath = ReadAllFile(rootStaticPath)
+      relativeRootStatsAllPath = rootStatsAllPath.map((item) => item.replace(rootStaticPath, ''))
+    }
 
     // 读取主题文件
     const staticAllPath = ReadAllFile(themeStaticPath)
@@ -74,11 +78,11 @@ let ConfigData = {}
     const relativeFileAll = [...relativeRootStatsAllPath, ...relativeStaticAllPath, ...relativeTemplateAllPath]
 
     for (const item in relativeFileAll) {
-      const ejs2Html = relativeFileAll[item].replaceAll('\\', '/').replace(/\.ejs$/i, '.html')
+      const ejs2Html = relativeFileAll[item].replace(/\\/g, '/').replace(/\.ejs$/i, '.html')
       AllFile[ejs2Html] = FileAll[item]
     }
   })
-})()
+}
 
 async function Main(req, res) {
   let pathname = req.url
@@ -107,4 +111,4 @@ async function Main(req, res) {
   if (flag) Handler404(res, AllFile['/404.html'], ConfigData)
 }
 
-module.exports = { GetMime, Handler404, Main }
+module.exports = { GetMime, Handler404, Main, WatchServer }

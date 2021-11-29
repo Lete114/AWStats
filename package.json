@@ -1,6 +1,6 @@
 {
   "name": "awstats",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "A fast , static files generator framework , powered by Node.js",
   "main": "index.js",
   "keywords": [
