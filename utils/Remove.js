@@ -1,5 +1,5 @@
 const { join } = require('path')
-const {existsSync,readdirSync,statSync,rmdirSync,unlinkSync}= require('fs')
+const { existsSync, readdirSync, statSync, rmdirSync, unlinkSync } = require('fs')
 
 /**
  * 删除目录下的所有文件及目录，包括当前目录
@@ -7,9 +7,10 @@ const {existsSync,readdirSync,statSync,rmdirSync,unlinkSync}= require('fs')
  */
 function Clear(path) {
   if (!existsSync(path)) return
+  if (statSync(path).isFile()) return unlinkSync(path)
   const files = readdirSync(path)
   for (let item of files) {
-    const filepath = join(path,item)
+    const filepath = join(path, item)
     const stats = statSync(filepath)
     if (stats.isDirectory()) Clear(filepath)
     else unlinkSync(filepath) //删除文件

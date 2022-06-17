@@ -1,4 +1,4 @@
-const { resolve, sep } = require('path')
+const { resolve } = require('path')
 const logger = require('./logger')
 const { readdir } = require('fs').promises
 const { statSync, createReadStream, createWriteStream, existsSync, mkdir } = require('fs')
@@ -30,13 +30,15 @@ async function CopyDirFile(src, newSrc) {
   paths.forEach((path) => {
     const _src = resolve(`${src}/${path}`)
     const _newSrc = resolve(`${newSrc}/${path}`)
-    if (existsSync(_newSrc)) {
-      logger.warn('The target file already exists, which may cause some problems')
-      console.log(logger.custom().hex('#FF4848').bold('Source File:'), _src)
-      console.log(logger.custom().hex('#FF4848').bold('Target File:'), _newSrc)
+
+    const stat = statSync(_src)
+
+    // 如果是目录则递归调用自身
+    if (stat.isDirectory()) {
+      mkdir(_newSrc, () => CopyDirFile(_src, _newSrc))
       return
     }
-    const stat = statSync(_src)
+
     // 判断是否为文件
     if (stat.isFile()) {
       // 创建读取流
@@ -46,11 +48,6 @@ async function CopyDirFile(src, newSrc) {
 
       readable.on('data', (chunk) => writable.write(chunk))
       readable.on('end', () => writable.end())
-      return
-    }
-    // 如果是目录则递归调用自身
-    if (stat.isDirectory()) {
-      mkdir(_newSrc, () => CopyDirFile(_src, _newSrc))
     }
   })
 }
