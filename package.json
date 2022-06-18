@@ -1,6 +1,6 @@
 {
   "name": "awstats",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "A fast , static files generator framework , powered by Node.js",
   "main": "index.js",
   "keywords": [
@@ -23,9 +23,6 @@
   },
   "directories": {
     "lib": "lib"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
