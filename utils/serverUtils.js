@@ -74,8 +74,8 @@ function WatchServer() {
     const templateAllPath = ReadAllFile(themeTemplatePath, { suffix: ['.ejs'] })
     const relativeTemplateAllPath = templateAllPath.map((item) => item.replace(themeTemplatePath, ''))
 
-    const FileAll = [...rootStatsAllPath, ...staticAllPath, ...templateAllPath]
-    const relativeFileAll = [...relativeRootStatsAllPath, ...relativeStaticAllPath, ...relativeTemplateAllPath]
+    const FileAll = [...staticAllPath, ...rootStatsAllPath, ...templateAllPath]
+    const relativeFileAll = [...relativeStaticAllPath, ...relativeRootStatsAllPath, ...relativeTemplateAllPath]
 
     for (const item in relativeFileAll) {
       const ejs2Html = relativeFileAll[item].replace(/\\/g, '/').replace(/\.ejs$/i, '.html')
