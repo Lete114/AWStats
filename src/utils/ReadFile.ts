@@ -1,5 +1,5 @@
-const { join, extname } = require('path')
-const { statSync, readdirSync, existsSync } = require('fs')
+import { join, extname } from 'path'
+import { statSync, readdirSync, existsSync } from 'fs'
 
 /**
  * 读取一个目录下的所有文件
@@ -7,7 +7,15 @@ const { statSync, readdirSync, existsSync } = require('fs')
  * @param {Object} options 选项:
  * @returns {Array}
  */
-function ReadAllFile(dirPath, options = {}) {
+// eslint-disable-next-line max-statements
+function ReadAllFile(
+  dirPath: string,
+  options?: {
+    suffix?: false | string[]
+    ignoreSuffix?: false | string[]
+    ignore?: false | string[]
+  }
+): string[] {
   if (!existsSync(dirPath)) return []
   const defualtOptions = {
     suffix: false,
@@ -16,17 +24,17 @@ function ReadAllFile(dirPath, options = {}) {
   }
   options = Object.assign(defualtOptions, options)
 
-  let array = []
+  let array: string[] = []
   const result = readdirSync(dirPath)
   for (const item of result) {
     const resolvePath = join(dirPath, item)
 
     // 忽略文件|目录
-    const isIgnore = options.ignore && item.includes(options.ignore)
+    const isIgnore = options.ignore && options.ignore.includes(item)
     if (isIgnore) continue
 
     // 忽略指定文件后缀
-    const isIgnoreSuffix = options.ignoreSuffix && extname(item).includes(options.ignoreSuffix)
+    const isIgnoreSuffix = options.ignoreSuffix && options.ignoreSuffix.includes(extname(item))
     if (isIgnoreSuffix) continue
 
     // 读取文件信息
@@ -36,7 +44,8 @@ function ReadAllFile(dirPath, options = {}) {
     if (stat.isFile()) {
       // 读取指定文件后缀名
       if (options.suffix) {
-        const isSuffix = extname(item).includes(options.suffix)
+        const isSuffix = options.suffix.includes(extname(item))
+        // eslint-disable-next-line max-depth
         if (isSuffix) array.push(resolvePath)
       } else {
         array.push(resolvePath)
@@ -53,4 +62,4 @@ function ReadAllFile(dirPath, options = {}) {
   return array
 }
 
-module.exports = ReadAllFile
+export default ReadAllFile

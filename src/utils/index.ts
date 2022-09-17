@@ -1,31 +1,27 @@
-// utils 工具
-
-const { readFileSync } = require('fs')
-const { join } = require('path')
-const { existsSync } = require('fs')
-const yaml = require('js-yaml')
-const logger = require('./logger')
-const { CopyFile, CopyDirFile } = require('./CopyFile')
-const CreateDirPath = require('./CreateDirPath')
-const ReadAllFile = require('./ReadFile')
-const Clear = require('./Remove')
+import { readFileSync, existsSync } from 'fs'
+import { join } from 'path'
+import yaml from 'js-yaml'
+import merge from 'deepmerge'
+import logger from './logger'
+import ReadAllFile from './ReadFile'
+import { KV } from '../type'
 
 /**
  *  获取绝对路径
  * @param {*} Path 路径，必须以‘/’开头
  * @returns 绝对路径完整地址
  */
-function resolvePath(...Path) {
-  let root = process.cwd()
-  return join(root, ...Path)
+function resolvePath(...path: string[]) {
+  return join(process.cwd(), ...path)
 }
 
 /**
  * 解析配置文件
- * @param {*} filePath 文件路径
- * @returns Config JSON
+ * @param {String} filePath 文件路径
+ * @returns {Object} Config JSON
  */
-function parseConfigFile(filePath) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function parseConfigFile(filePath: string): any {
   const config = readFileSync(filePath, { encoding: 'utf8' })
   return yaml.load(config) // 解析配置文件
 }
@@ -44,7 +40,8 @@ function DeepClone(obj = {}) {
  * 获取配置文件
  * @returns {Object}
  */
-function GetConfig() {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function GetConfig(): any {
   // 获取配置文件绝对路径
   const configYaml = resolvePath('/config.yaml')
   const configYml = resolvePath('/config.yml')
@@ -54,9 +51,9 @@ function GetConfig() {
   const isYml = existsSync(configYml)
 
   if (isYml) return parseConfigFile(configYml)
-  else if (isYaml) return parseConfigFile(configYaml)
-
+  if (isYaml) return parseConfigFile(configYaml)
   logger.err('Configuration file not found')
+  return {}
 }
 
 /**
@@ -64,8 +61,8 @@ function GetConfig() {
  * @param {String} theme 主题昵称
  * @returns {Object}
  */
-function GetThemeConfig(theme) {
-  if (!theme) return
+function GetThemeConfig(theme: string): KV {
+  if (!theme) return {}
 
   // 获取配置文件绝对路径
   const configThemeYaml = resolvePath(`/themes/${theme}/config.yaml`)
@@ -90,18 +87,7 @@ function GetThemeConfig(theme) {
   if (isRootYml) themeRootConfig = parseConfigFile(configRootThemeYml)
   else if (isRootYaml) themeRootConfig = parseConfigFile(configRootThemeYaml)
 
-  return Object.assign(themeConfig, themeRootConfig)
+  return merge(themeConfig, themeRootConfig)
 }
 
-module.exports = {
-  resolvePath,
-  DeepClone,
-  parseConfigFile,
-  GetConfig,
-  GetThemeConfig,
-  ReadAllFile,
-  CopyFile,
-  CopyDirFile,
-  CreateDirPath,
-  Clear
-}
+export { resolvePath, DeepClone, parseConfigFile, GetConfig, GetThemeConfig, ReadAllFile }

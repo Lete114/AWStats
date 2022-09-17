@@ -1,6 +1,7 @@
-const version = require('../package.json').version
-const { readFileSync, writeFileSync, existsSync } = require('fs')
-const { resolvePath, CopyFile, ReadAllFile,CreateDirPath } = require('./index')
+import { version } from '../../package.json'
+import { readFileSync, writeFileSync, existsSync, copySync } from 'fs-extra'
+import { resolvePath, ReadAllFile } from './index'
+import { KV } from '../type'
 
 /**
  * 设置package.json中AWStats版本
@@ -8,20 +9,22 @@ const { resolvePath, CopyFile, ReadAllFile,CreateDirPath } = require('./index')
 function SetVersion() {
   const pkgPath = resolvePath('package.json')
   const pkg = readFileSync(pkgPath, { encoding: 'utf-8' })
-  let pkgJson = JSON.parse(pkg)
+  const pkgJson = JSON.parse(pkg)
   if (!pkgJson.awstats.version) {
     pkgJson.awstats.version = version
-    writeFileSync(pkgPath, JSON.stringify(pkgJson, null, 2), { encoding: 'utf-8' })
+    writeFileSync(pkgPath, JSON.stringify(pkgJson, null, 2), {
+      encoding: 'utf-8'
+    })
   }
 }
 
 /**
  * 复制静态文件
- * @param {*} theme 主题昵称
- * @param {*} publicDir 生成文件路径
+ * @param {string} theme 主题昵称
+ * @param {string} publicDir 生成文件路径
  */
-function CopyStatic(theme, publicDir) {
-  let paths = []
+function CopyStatic(theme: string, publicDir: string) {
+  let paths: string[] = []
 
   // 将主题的静态资源(static)复制到生成路径(public)
   const themeStatic = resolvePath(`/themes/${theme}/static`)
@@ -33,9 +36,10 @@ function CopyStatic(theme, publicDir) {
   const isSource = existsSync(rootSourcePath)
   if (isSource) paths = [...paths, ...ReadAllFile(rootSourcePath)]
 
-  const mapper = {}
+  const mapper: KV = {}
   for (const i of paths) mapper[i] = i.replace(themeStatic, publicDir).replace(rootSourcePath, publicDir)
 
+  // 使根目录的 source 优先级高于 theme/static （如果相同，根目录的source会覆盖static）
   for (const k1 in mapper) {
     const v1 = mapper[k1]
     for (const k2 in mapper) {
@@ -43,10 +47,7 @@ function CopyStatic(theme, publicDir) {
       if (k1 !== k2 && v1 === v2) delete mapper[k1]
     }
   }
-  for (const [k, v] of Object.entries(mapper)) {
-    CreateDirPath(v)
-    CopyFile(k, v)
-  }
+  for (const [k, v] of Object.entries(mapper)) copySync(k, v)
 }
 
-module.exports = { SetVersion, CopyStatic }
+export { SetVersion, CopyStatic }

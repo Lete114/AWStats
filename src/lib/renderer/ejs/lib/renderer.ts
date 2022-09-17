@@ -1,12 +1,12 @@
-const ejs = require('ejs')
-const { extname } = require('path')
-const {statSync} = require('fs')
+import ejs from 'ejs'
+import { extname } from 'path'
+import { statSync } from 'fs'
 
-async function renderer(file, config) {
+async function renderer(file: string, config: object) {
   const stats = statSync(file)
   const condition = stats.isFile() && extname(file) === '.ejs'
   if (condition) return await ejs.renderFile(file, config)
   return ''
 }
 
-module.exports = renderer
+export default renderer

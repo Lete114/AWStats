@@ -1,12 +1,12 @@
 // build 构建生成
-const { writeFileSync, existsSync, mkdirSync, statSync } = require('fs')
-const { join, extname } = require('path')
-const { EjsRenderer } = require('./renderer')
-const logger = require('../utils/logger')
-const { SetVersion, CopyStatic } = require('../utils/generatedUtils')
-const { GetConfig, GetThemeConfig, ReadAllFile, CreateDirPath, Clear, resolvePath } = require('../utils')
+import { writeFileSync, existsSync, mkdirSync, mkdirs, remove } from 'fs-extra'
+import { join, parse } from 'path'
+import { EjsRenderer } from './renderer'
+import logger from '../utils/logger'
+import { SetVersion, CopyStatic } from '../utils/generatedUtils'
+import { GetConfig, GetThemeConfig, ReadAllFile, resolvePath } from '../utils'
 
-module.exports = async function () {
+export default async function () {
   SetVersion()
   const config = GetConfig()
   const theme = GetThemeConfig(config.theme)
@@ -16,7 +16,7 @@ module.exports = async function () {
   logger.info('Generated ...')
 
   // 判断public目录是否存在  存在则删除
-  if (existsSync(publicDir)) Clear(publicDir)
+  if (existsSync(publicDir)) await remove(publicDir)
   mkdirSync(publicDir)
 
   // 复制静态文件
@@ -27,9 +27,7 @@ module.exports = async function () {
   const templatePath = ReadAllFile(templateDir)
 
   // 解析Template
-  for (let file of templatePath) {
-    const stats = statSync(file) // 获取文件状态
-
+  for (const file of templatePath) {
     const HTMLData = await EjsRenderer(file, ConfigData)
 
     const reg = /\.ejs$/i
@@ -38,7 +36,7 @@ module.exports = async function () {
     if (!reg.test(file)) continue
     const htmlPath = join(`${publicDir}/${filePath}`)
 
-    CreateDirPath(htmlPath)
+    mkdirs(parse(htmlPath).dir)
     writeFileSync(htmlPath, HTMLData, 'utf8')
   }
 

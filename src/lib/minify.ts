@@ -1,7 +1,7 @@
 // minify 压缩
 
-const { GetConfig, resolvePath } = require('../utils')
-const { reader, minify } = require('../utils/minifyUtils')
+import { GetConfig, resolvePath } from '../utils'
+import { reader, minify } from '../utils/minifyUtils'
 
 // 默认配置
 const defaultConfig = {
@@ -19,7 +19,7 @@ const defaultConfig = {
   }
 }
 
-module.exports = function () {
+export default function () {
   const config = GetConfig()
   const generatePath = resolvePath('/' + config.public)
 

@@ -1,38 +1,16 @@
-const chokidar = require('chokidar')
-const { readFile, existsSync } = require('fs')
-const { join, extname } = require('path')
-const { EjsRenderer } = require('../lib/renderer')
-const { resolvePath, GetConfig, GetThemeConfig, ReadAllFile } = require('./index')
-
-/**
- * 获取Mime类型
- * @param {*} extname
- * @param {*} callback
- */
-function GetMime(extname) {
-  const mimePath = join(__dirname, '../source/mime.json')
-  return new Promise((resolve, reject) => {
-    const mime = require(mimePath)
-    resolve(mime[extname] || 'text/plain')
-  })
-}
-
-/**
- * 处理404
- * @param {*} res
- * @param {*} public
- */
-async function Handler404(res, path, ConfigData) {
-  if (!existsSync(path)) return res.end('Not Find 404')
-  const data = await EjsRenderer(path, ConfigData)
-  res.writeHead(404, { 'Content-Type': 'text/html;charset=utf8' })
-  res.end(data)
-}
+import chokidar from 'chokidar'
+import mime from 'mime'
+import { readFile, existsSync } from 'fs'
+import { extname } from 'path'
+import { IncomingMessage, ServerResponse } from 'http'
+import { EjsRenderer } from '../lib/renderer'
+import { resolvePath, GetConfig, GetThemeConfig, ReadAllFile } from './index'
+import { KV } from '../type'
 
 // Watch 监听文件
-let AllFile = {}
-let ConfigData = {}
-function WatchServer() {
+const AllFile: KV = {}
+let ConfigData: KV = {}
+function watchServer(): void {
   // 获取配置文件
   const config = GetConfig()
   const theme = GetThemeConfig(config.theme)
@@ -60,8 +38,8 @@ function WatchServer() {
   const watchDir = [rootStaticPath, themeStaticPath, themeTemplatePath]
   chokidar.watch(watchDir).on('all', () => {
     // 读取根目录静态文件
-    let rootStatsAllPath = []
-    let relativeRootStatsAllPath = []
+    let rootStatsAllPath: string[] = []
+    let relativeRootStatsAllPath: string[] = []
     if (existsSync(rootStaticPath)) {
       rootStatsAllPath = ReadAllFile(rootStaticPath)
       relativeRootStatsAllPath = rootStatsAllPath.map((item) => item.replace(rootStaticPath, ''))
@@ -84,31 +62,31 @@ function WatchServer() {
   })
 }
 
-async function Main(req, res) {
-  let pathname = req.url
+async function main(req: IncomingMessage, res: ServerResponse) {
+  let pathname = req.url || ''
 
   // 自动匹配/index.html
-  if (pathname.indexOf('.') == -1) pathname += 'index.html'
+  if (pathname.indexOf('.') === -1) pathname += 'index.html'
 
-  let flag = true
-  for (const item in AllFile) {
-    if (item === pathname) {
-      flag = false
-      if (extname(item) === '.html') {
-        const data = await EjsRenderer(AllFile[item], ConfigData)
-        res.end(data)
-      } else {
-        // 读取文件
-        readFile(AllFile[item], async (err, data) => {
-          if (err) return Handler404(res, AllFile['/404.html'], ConfigData)
-          const mime = await GetMime(extname(pathname))
-          res.writeHead(200, { 'Content-Type': mime })
-          res.end(data)
-        })
-      }
-    }
+  const error404 = AllFile['/404.html']
+  const path = AllFile[pathname] || ''
+  if (path && extname(pathname) === '.html') {
+    const data = await EjsRenderer(path, ConfigData)
+    res.end(data)
+    return
   }
-  if (flag) Handler404(res, AllFile['/404.html'], ConfigData)
+  readFile(path, async (err, data) => {
+    if (err) {
+      if (!existsSync(error404)) return res.end('Not Find 404')
+      const data = await EjsRenderer(error404, ConfigData)
+      res.writeHead(404, { 'Content-Type': 'text/html;charset=utf8' })
+      res.end(data)
+      return
+    }
+    const mimeType = mime.getType(extname(pathname)) || 'text/plain'
+    res.setHeader('Content-Type', mimeType)
+    res.end(data)
+  })
 }
 
-module.exports = { GetMime, Handler404, Main, WatchServer }
+export { main, watchServer }
