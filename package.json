@@ -9,6 +9,11 @@
     "lint": "eslint src && prettier --check src",
     "lint:fix": "eslint --fix src && prettier --check --write src"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "author": "Lete乐特",
   "license": "MIT",
   "keywords": [
