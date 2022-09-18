@@ -24,7 +24,7 @@ export default async function () {
 
   // 获取模板路径
   const templateDir = resolvePath(`/themes/${config.theme}/template`)
-  const templatePath = ReadAllFile(templateDir)
+  const templatePath = ReadAllFile(templateDir, { ignore: ['_modules'] })
 
   // 解析Template
   for (const file of templatePath) {

@@ -49,7 +49,7 @@ function watchServer(): void {
     const staticAllPath = ReadAllFile(themeStaticPath)
     const relativeStaticAllPath = staticAllPath.map((item) => item.replace(themeStaticPath, ''))
 
-    const templateAllPath = ReadAllFile(themeTemplatePath, { suffix: ['.ejs'] })
+    const templateAllPath = ReadAllFile(themeTemplatePath, { suffix: ['.ejs'], ignore: ['_modules'] })
     const relativeTemplateAllPath = templateAllPath.map((item) => item.replace(themeTemplatePath, ''))
 
     const FileAll = [...staticAllPath, ...rootStatsAllPath, ...templateAllPath]
