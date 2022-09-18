@@ -7,24 +7,24 @@ import { GetConfig, resolvePath } from '../utils'
 import { CommonSpawnOptions } from 'child_process'
 import { join } from 'path'
 
-const config = GetConfig()
-const generatePath = resolvePath(config.public)
-const gitDeployPath = resolvePath('.deploy_git')
-const gitDeployPathTemp = join(gitDeployPath, '__awstats__temp__')
-const force = config.deploy.force ? '-f' : ''
-const remote = config.deploy.remote
-const branch = config.deploy.branch
-const commitMsg =
-  config.deploy.commitMsg || `updated: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`
-const repoURL = config.deploy.repoURL
-
-const args = []
-args.push(force, remote, branch)
-if (!force) args.shift()
-
 const options: CommonSpawnOptions = { stdio: 'inherit' }
 
+// eslint-disable-next-line max-statements
 export default async function () {
+  const config = GetConfig()
+  const generatePath = resolvePath(config.public)
+  const gitDeployPath = resolvePath('.deploy_git')
+  const gitDeployPathTemp = join(gitDeployPath, '__awstats__temp__')
+  const force = config.deploy.force ? '-f' : ''
+  const remote = config.deploy.remote
+  const branch = config.deploy.branch
+  const commitMsg =
+    config.deploy.commitMsg || `updated: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`
+  const repoURL = config.deploy.repoURL
+
+  const args = []
+  args.push(force, remote, branch)
+  if (!force) args.shift()
   if (!existsSync(generatePath)) {
     logger.err('Please build before you deploy')
     return
